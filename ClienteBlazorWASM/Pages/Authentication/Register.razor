@@ -1,0 +1,67 @@
+﻿@page "/register"
+
+<EditForm Model="UserForRegister" OnValidSubmit="registerUser" class="pt-4">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="py-4">
+        <div class=" row form-group ">
+            <div class="col-6 offset-3 ">
+                <div class="card border">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-success text-center py-2">
+                            <strong>Registrarse</strong>
+                        </h3>
+
+                        @if (ShowErrorRegister)
+                        {
+                            <div>
+                                @foreach (var error in Mistakes)
+                                {
+                                    <p class="text-danger text-center">@error</p>
+                                }
+                            </div>
+                        }
+
+                        <hr style="background-color:aliceblue" />
+                        <div class="py-2">
+                            <InputText @bind-Value="UserForRegister.Name" class="form-control" placeholder="Nombre..." />
+                            <ValidationMessage For="(()=>UserForRegister.Name)" />
+
+                        </div>
+                        <div class="py-2">
+                            <InputText @bind-Value="UserForRegister.Email" class="form-control" placeholder="Email..." />
+                            <ValidationMessage For="(()=>UserForRegister.Email)" />
+
+                        </div>
+                        <div class="py-2 input-group">
+                            <InputText @bind-Value="UserForRegister.UserName" class="form-control" placeholder="Nombre de Usuario..." />
+                            <ValidationMessage For="(()=>UserForRegister.UserName)" />
+
+                        </div>
+                        <div class="form-row py-2">
+                            <div class="col">
+                                <InputText @bind-Value="UserForRegister.Password" type="password" id="password" placeholder="Password..." class="form-control" />
+                                <ValidationMessage For="(()=>UserForRegister.Password)" />
+                            </div>
+
+                        </div>
+                        <hr style="background-color:aliceblue" />
+                        <div class="py-2">
+                            @if (isProcessing)
+                            {
+                                <button type="submit" class="btn btn-success btn-block disabled"><i class="fas fa-sign-in-alt"></i> Porfavor espere...</button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success btn-block"><i class="fas fa-sign-in-alt"></i> Registrarse</button>
+                            }
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</EditForm>

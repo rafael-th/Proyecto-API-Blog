@@ -1,0 +1,127 @@
+﻿@page "/posts-radzen"
+@using ClienteBlazorWASM.Models
+@using ClienteBlazorWASM.Services.IServices
+@using Microsoft.AspNetCore.Authorization
+@using Radzen
+@inject IPostService postService
+@inject IJSRuntime JsRuntime
+@attribute [Authorize]
+
+<h1 class="text-center">Post</h1>
+
+<RadzenDataGrid AllowFiltering="true" AllowColumnResize="true" AllowAlternatingRows="false" FilterMode="FilterMode.Advanced" AllowSorting="true" PageSize="5" AllowPaging="true" PagerHorizontalAlign="HorizontalAlign.Left" ShowPagingSummary="true"
+                Data="@Posts" TItem="Post" ColumnWidth="300px" LogicalFilterOperator="LogicalFilterOperator.Or">
+    <Columns>
+        <RadzenDataGridColumn TItem="Post" Property="Id" Title="Id" Frozen="true" Width="50px" />
+        <RadzenDataGridColumn TItem="Post" Property="Title" Title="Título" Width="200px" />
+        <RadzenDataGridColumn TItem="Post" Property="Description" Title="Descripción" Width="200px" />
+        <RadzenDataGridColumn TItem="Post" Property="Tags" Title="Etiquetas" Width="140px" />
+        <RadzenDataGridColumn TItem="Post" Width="80px">
+            <Template Context="data">
+                <RadzenImage Path="@data.RouteImage" class="rz-gravatar" />
+            </Template>
+        </RadzenDataGridColumn>
+        <RadzenDataGridColumn TItem="Post" Property="CreationDate" Title="FechaCreación" Width="150px" />
+        <RadzenDataGridColumn TItem="Post" Property="UpdateDate" Title="FechaActualización" Width="150px" />
+        <RadzenDataGridColumn TItem="Post" Property="Id">
+            <Template Context="data">
+                <NavLink href="@($"edit-post/{data.Id}")" class="btn btn-success "><i class="bi bi-gear-fill"></i>&nbsp; Editar</NavLink>
+                <button class="btn btn-danger btn-sm" @onclick="()=>HandlerOnDelete(data.Id)"><i class="bi bi-trash-fill"></i>&nbsp; Borrar</button>
+            </Template>
+         </RadzenDataGridColumn> 
+    </Columns>
+</RadzenDataGrid>
+
+
+@* <div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-7">
+                <h4 class="card-title text-dark">Lista de Post</h4>
+            </div>
+            <div class="col-3 offset-2">
+                <NavLink href="create-post" class="btn btn-primary"><i class="bi bi-plus-circle-fill"></i>&nbsp; Nuevo Post</NavLink>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Etiquetas</th>
+                    <th>Imágen</th>
+                    <th>Fecha de Creación</th>
+                    <th>Fecha de Actualización</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Posts.Count() > 0)
+                {
+                    @foreach (var post in Posts)
+                    {
+                        <tr>
+                            <td>@post.Id</td>
+                            <td>@post.Title</td>
+                            <td>@post.Description</td>
+                            <td>@post.Tags</td>
+                            <td><img src="@post.RouteImage" class="img-fluid" width="100px"/></td>
+                            <td>@post.CreationDate</td>
+                            <td>@post.UpdateDate</td>
+                            <td>
+                                <NavLink href="@($"edit-post/{post.Id}")" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Editar</NavLink>
+                                <button class="btn btn-danger" @onclick="() => HandlerOnDelete(post.Id)"><i class="bi bi-trash-fill"></i>&nbsp; Eliminar</button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5">Cargando...</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div> *@
+
+<ConfirmDelete ProcessingBaseComponent = "isProcessing" changeConfirmation="Click_Confirmation_Delete"></ConfirmDelete>
+
+@code {
+    public IEnumerable<Post> Posts { get; set; } = new List<Post>();
+
+    private bool isProcessing { get; set; } = false;
+
+    private int? DeleteIdPost { get; set; } = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Posts = await postService.GetPosts();
+    }
+
+    public async Task HandlerOnDelete(int postId)
+    {
+        DeleteIdPost = postId;
+        await JsRuntime.InvokeVoidAsync("ShowModalConfirmDelete");
+    }
+
+    public async Task Click_Confirmation_Delete(bool confirmed)
+    {
+        isProcessing = true;
+        if (confirmed && DeleteIdPost != null)
+        {
+            // Post post = await postService.GetPost(DeleteIdPost.Value);
+            await postService.DeletePost(DeleteIdPost.Value);
+            await JsRuntime.ToastrSuccess("Post eliminado correctamente");
+            Posts = await postService.GetPosts();
+        }
+
+        await JsRuntime.InvokeVoidAsync("HideModalConfirmDelete");
+        isProcessing = false;
+    }
+
+}

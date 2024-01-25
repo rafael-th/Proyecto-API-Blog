@@ -1,0 +1,55 @@
+﻿@page "/"
+@using ClienteBlazorWASM.Models
+@using ClienteBlazorWASM.Services.IServices
+@inject IJSRuntime JsRuntime
+@inject IPostService postsService
+@* @using ClienteBlazorWASM.Helpers *@
+
+<PageTitle>Inicio</PageTitle>
+
+<h1 class="text-center">Últimos Post</h1>
+
+<div class="row">
+    @foreach (var post in Posts)
+    {
+        <div class="col-3 mt-3">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="text-center">@post.Title</h3>
+                </div>
+                <div class="card-body">
+                    <img src="@post.RouteImage" class="img-fluid"/>
+                </div>
+                <div class="card-footer">
+                    <NavLink href="@($"detail-post/{post.Id}")">Más información</NavLink>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@* <div class="row mt-4">
+    <div class="col-4">
+        <button class="btn btn-success" @onclick="DemoSuccess">Demo Toastr Success</button>
+        <button class="btn btn-danger" @onclick="DemoError">Demo Toastr Error</button>
+    </div>
+</div> *@
+
+
+@code{
+    private IEnumerable<Post> Posts { get; set; } = new List<Post>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Posts = await postsService.GetPosts();
+    }
+
+    // private async Task DemoSuccess(){
+    //     await JsRuntime.ToastrSuccess("Tarea Completada!");
+    // }                   
+
+    // private async Task DemoError()
+    // {
+    //     await JsRuntime.ToastrError("Error, Tarea Incompleta!");
+    // }
+}

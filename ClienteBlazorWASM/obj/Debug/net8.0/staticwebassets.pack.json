@@ -1,0 +1,73 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\obj\\Debug\\net8.0\\compressed\\w414u5c8c5.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\obj\\Debug\\net8.0\\scopedcss\\bundle\\ClienteBlazorWASM.styles.css",
+      "PackagePath": "staticwebassets\\ClienteBlazorWASM.styles.css"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\images\\fondo-header.jpg",
+      "PackagePath": "staticwebassets\\images\\fondo-header.jpg"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\images\\loader.gif",
+      "PackagePath": "staticwebassets\\images\\loader.gif"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\js\\common.js",
+      "PackagePath": "staticwebassets\\js\\common.js"
+    },
+    {
+      "Id": "E:\\CURSO_MASTER_BLAZOR_udemy\\ApiBlogApp\\ClienteBlazorWASM\\wwwroot\\sample-data\\weather.json",
+      "PackagePath": "staticwebassets\\sample-data\\weather.json"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.ClienteBlazorWASM.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.ClienteBlazorWASM.props",
+      "PackagePath": "build\\ClienteBlazorWASM.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.ClienteBlazorWASM.props",
+      "PackagePath": "buildMultiTargeting\\ClienteBlazorWASM.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.ClienteBlazorWASM.props",
+      "PackagePath": "buildTransitive\\ClienteBlazorWASM.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

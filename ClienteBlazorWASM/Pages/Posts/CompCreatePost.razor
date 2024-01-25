@@ -1,0 +1,138 @@
+﻿@page "/create-post"
+@using ClienteBlazorWASM.Models
+@using ClienteBlazorWASM.Services.IServices
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Authorization
+@inject IPostService postService
+@inject IJSRuntime JsRuntime 
+@inject NavigationManager navigationManager
+@attribute [Authorize]
+
+<h1 class="text-center">Crear Post</h1>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-7">
+                <h4 class="card-title text-dark">Nuevo Post</h4>
+            </div>            
+        </div>
+    </div>
+    <div class="card-body">
+        <EditForm Model="CreatePost" OnValidSubmit="@( () => HanlerOnCreatePost())">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="container">
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Título:</label>
+                        </div>
+                        <div class="col-6">
+                            <InputText @bind-Value="CreatePost.Title" class="form-control" placeholder="Ingrese el título"></InputText>
+                            <ValidationMessage For="() => CreatePost.Title"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Descripción:</label>
+                        </div>
+                        <div class="col-6">
+                            <InputText @bind-Value="CreatePost.Description" class="form-control" placeholder="Ingrese la descripción"></InputText>
+                            <ValidationMessage For="() => CreatePost.Description"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Etiquetas:</label>
+                        </div>
+                        <div class="col-6">
+                            <InputText @bind-Value="CreatePost.Tags" class="form-control" placeholder="Ingrese las etiquetas separadas por coma"></InputText>
+                            <ValidationMessage For="() => CreatePost.Tags"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4>Imagen Post</h4>
+                            <InputFile OnChange="@HandlerOnUploadFile"></InputFile>
+                            <br />
+                            @if (imagePost != null)
+                            {
+                                <div>
+                                    <img src="@imagePost" style="width:300px" />
+                                </div>
+                            }
+                        </div>                       
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Guardar</button>
+                        </div>
+                        <div class="col-6">
+                            <NavLink href="posts" class="btn btn-secondary"><i class="bi bi-arrow-left-circle-fill"></i>&nbsp; Volver</NavLink>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+       </EditForm>
+    </div>
+</div>
+
+
+@code {
+    private Post CreatePost { get; set; } = new Post();
+
+    [Parameter]
+    public string imagePost { get; set; }
+
+    [Parameter]
+    public EventCallback<string>OnChange { get; set; }
+
+    private async Task HanlerOnCreatePost()
+    {
+        CreatePost.RouteImage = imagePost;
+        var createPost = await postService.CreatePost(CreatePost);
+        await JsRuntime.ToastrSuccess("Post creado correctamente!");
+        navigationManager.NavigateTo("posts");
+    }
+
+    private async Task HandlerOnUploadFile(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+        if (imageFile != null)
+        {
+            //redimension de la imagen                       //alto / ancho
+            var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000,700);
+            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
+            {
+                var content = new MultipartFormDataContent();
+                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
+                imagePost = await postService.UploadImage(content);
+                await OnChange.InvokeAsync(imagePost);
+            }
+        }
+    }
+
+}

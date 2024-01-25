@@ -1,0 +1,152 @@
+﻿@page "/edit-post/{Id:int}"
+@using ClienteBlazorWASM.Models
+@using ClienteBlazorWASM.Services.IServices
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Authorization
+@inject IPostService postService
+@inject IJSRuntime JsRuntime
+@inject NavigationManager navigationManager
+@attribute [Authorize]
+
+<h1 class="text-center">Editar Post </h1>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-7">
+                <h4 class="card-title text-dark">Editar Post Existente</h4>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <EditForm Model="EditPost" OnValidSubmit="@( () => HanlerOnEditPost())">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <ValidationSummary></ValidationSummary>
+            <div class="container">
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Título:</label>
+                        </div>
+                        <div class="col-6">
+                            <InputText @bind-Value="EditPost.Title" class="form-control" placeholder="Ingrese el título"></InputText>
+                            <ValidationMessage For="() => EditPost.Title"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Descripción:</label>
+                        </div>
+                        <div class="col-6">
+                            <InputText @bind-Value="EditPost.Description" class="form-control" placeholder="Ingrese la descripción"></InputText>
+                            <ValidationMessage For="() => EditPost.Description"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <label>Etiquetas:</label>
+                        </div>
+                        <div class="col-6">
+                            <InputText @bind-Value="EditPost.Tags" class="form-control" placeholder="Ingrese las etiquetas separadas por coma"></InputText>
+                            <ValidationMessage For="() => EditPost.Tags"></ValidationMessage>
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6">
+                            <h4>Imagen Actual</h4>
+                            @* Muestra la imagen actual de la BD *@
+                            <div class="image-post mb-3" style="background: url('@EditPost.RouteImage'); width:300px; height:169px;background-size:cover;"></div>
+                        </div>
+                        <div class="col-6">
+                            <h4>Actualizar Imagen Post</h4>
+                            <InputFile OnChange="@HandlerOnUploadFile"></InputFile>
+                            <br />
+                            @if (imagePost != null)
+                            {
+                                <div>
+                                    <img src="@imagePost" style="width:300px" />
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-2">
+                            <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Editar</button>
+                        </div>
+                        <div class="col-6">
+                            <NavLink href="posts" class="btn btn-secondary"><i class="bi bi-arrow-left-circle-fill"></i>&nbsp; Volver</NavLink>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    private Post EditPost { get; set; } = new Post();
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    [Parameter]
+    public string imagePost { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnChange { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditPost = await postService.GetPost(Id.Value);
+    }
+
+    private async Task HanlerOnEditPost()
+    {
+        EditPost.RouteImage = imagePost;
+        var editPost = await postService.UpdatePost(Id.Value,EditPost);
+        await JsRuntime.ToastrSuccess("Post actualizado correctamente!");
+        navigationManager.NavigateTo("posts");
+    }
+
+    private async Task HandlerOnUploadFile(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+        if (imageFile != null)
+        {
+            //redimension de la imagen                       //alto / ancho
+            var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
+            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
+            {
+                var content = new MultipartFormDataContent();
+                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
+                imagePost = await postService.UploadImage(content);
+                await OnChange.InvokeAsync(imagePost);
+            }
+        }
+    }
+
+}
+
